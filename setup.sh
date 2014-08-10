@@ -1,9 +1,13 @@
 #!/bin/bash
 
-DIR=$(pwd)
 
+DIR=$(pwd)
 . include/common.sh
 
+[ -f ${LOG_FILE} ] && rm ${LOG_FILE}
+
+exec >  >(tee -a ${LOG_FILE})
+exec 2> >(tee -a ${LOG_FILE} >&2)
 #
 ## Surface Pro Kernel
 DoEcho "Installing base kernel version"
