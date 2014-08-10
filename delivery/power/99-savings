@@ -1,0 +1,160 @@
+#!/bin/bash
+#
+# A script to agressively toggle power management between high performance and very low power usage.
+# For more information on each of these options, see http://www.lesswatts.org
+#
+# To install:
+#
+# sudo install 99-savings /etc/pm/sleep.d
+# sudo install 99-savings /etc/pm/power.d
+#
+
+##
+## POWER SAVE OFF
+##
+
+ac_power()
+{
+  local satamode="max_power"
+  local cpumode="ondemand"
+
+  ##
+  ## DISK and FILESYSTEMS
+  ##
+
+  # Set the drive to mostly stay awake.  Some may want to change -B 200
+  # to -B 255 to avoid accumulating Load_Cycle_Counts
+  # -S 240 => put in standby after 20 minutes idle
+  # -B 200 => do not permit spindown
+  # -M => not supported by my drive
+  hdparm -B 200 -S 240 /dev/sda
+
+  # Remount ext3/4 filesystems so the journal commit only happens every 60
+  # seconds.  By default this is 5 but, I prefer to reduce the disk
+  # activity a bit.
+  mount -o remount,commit=60,atime /
+
+  # Turn off the laptop mode disk optimization
+  echo 0 > /proc/sys/vm/laptop_mode
+
+  # Set the SATA to max performance
+  echo "${satamode}" > /sys/class/scsi_host/host0/link_power_management_policy
+  echo "${satamode}" > /sys/class/scsi_host/host1/link_power_management_policy
+  echo "${satamode}" > /sys/class/scsi_host/host2/link_power_management_policy
+  echo "${satamode}" > /sys/class/scsi_host/host3/link_power_management_policy
+
+  ##
+  ## NETWORK
+  ##
+
+  # set the wifi to no power savings.
+  iwconfig mlan0 power off
+  iwconfig wlan0 power off
+
+  ##
+  ## CPU AND MEMORY
+  ##
+
+  # Set kernel dirty page value back to default
+  echo 10 > /proc/sys/vm/dirty_ratio
+  echo 5 > /proc/sys/vm/dirty_background_ratio
+
+  # Only wakeup every 60 seconds to see if we need to write dirty pages
+  # By default this is every 5 seconds but, I prefer 60 to reduce disk
+  # activity.
+  echo 6000 > /proc/sys/vm/dirty_writeback_centisecs
+
+  # Make sure ondemand governor is set
+  echo "${cpumode}" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+  echo "${cpumode}" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+  echo "${cpumode}" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+  echo "${cpumode}" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+
+
+  ##
+  ## SOUND AND VIDEO
+  ##
+
+  # Turn off sound card power savings
+  echo 0 > /sys/module/snd_hda_intel/parameters/power_save
+
+  # Enable the webcam driver
+  modprobe uvcvideo
+}
+
+##
+## POWER SAVE ON
+##
+
+battery_power()
+{
+  local satamode="min_power"
+  local cpumode="powersave"
+  ##
+  ## DISK and FILESYSTEMS
+  ##
+
+  # Set the disks to aggressively save power.
+  # Some might find these settings too aggressive.  If so, change
+  # "-S 4" to something larger like -S 24 (two minutes) and -B 1 to -B 255.
+  # -S 4 => put in standby after 20 seconds idle
+  # -B 1 => highest degree of power savings
+  # -M => not supported by my drive
+  hdparm -B 1 -S 4 /dev/sda
+
+  # Change ext3/ext4 filesystem settings to reduce disk activity.
+  # noatime => disable updates to a file's access time when the file is read.
+  # commit=600 => Change the commit times to 10 minutes.
+  mount -o remount,noatime,commit=600 /
+
+  # Set laptop disk write mode
+  echo 5 > /proc/sys/vm/laptop_mode
+
+  # Set SATA to minimum power
+  echo "${satamode}" > /sys/class/scsi_host/host0/link_power_management_policy
+  echo "${satamode}" > /sys/class/scsi_host/host1/link_power_management_policy
+  echo "${satamode}" > /sys/class/scsi_host/host2/link_power_management_policy
+  echo "${satamode}" > /sys/class/scsi_host/host3/link_power_management_policy
+
+  ##
+  ## NETWORK
+  ##
+
+  # set the wifi to power savings.
+  iwconfig mlan0 power on
+  iwconfig wlan0 power on
+
+  ##
+  ## CPU AND MEMORY
+  ##
+
+  # Make sure powersave governor is set
+  echo "${cpumode}" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+  echo "${cpumode}" > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+  echo "${cpumode}" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+  echo "${cpumode}" > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+
+  # Reduce disk activity by waiting up to 10 minutes before doing writes
+  echo 90 > /proc/sys/vm/dirty_ratio
+  echo 1 > /proc/sys/vm/dirty_background_ratio
+  echo 60000 > /proc/sys/vm/dirty_writeback_centisecs
+
+  ##
+  ## SOUND AND VIDEO
+  ##
+
+  # Set sound card power savings
+  echo 10 > /sys/module/snd_hda_intel/parameters/power_save
+
+  # Remove the webcam driver
+  modprobe -r uvcvideo
+}
+
+##
+## APPLY SETTINGS
+##
+
+case "$1" in
+  false) ac_power ;;
+  true) battery_power ;;
+esac
