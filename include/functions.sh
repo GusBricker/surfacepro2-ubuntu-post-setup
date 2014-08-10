@@ -31,3 +31,15 @@ function DeliverFile()
 
     cp "${DELIVERY_DIR}/${file}" "${delivery_path}"
 }
+
+function CheckLastResult()
+{
+    local result=$1
+    local message=$2
+
+    if [ "${result}" -ne 0 ]
+    then
+        DoEcho "${message}"
+        exit 1
+    fi
+}

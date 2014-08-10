@@ -1,0 +1,29 @@
+#!/bin/sh
+
+KillNetworking()
+{
+    rfkill block wifi
+}
+
+RestoreNetworking()
+{
+    rfkill unblock wifi
+}
+
+case $1 in
+    hibernate)
+        KillNetworking
+        ;;
+    suspend)
+        KillNetworking
+        ;;
+    thaw)
+        RestoreNetworking
+        ;;
+    resume)
+        RestoreNetworking
+        ;;
+    *)
+        echo Something is not right.
+        ;;
+esac
