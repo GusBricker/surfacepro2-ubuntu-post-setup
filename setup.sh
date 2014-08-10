@@ -8,6 +8,14 @@ DIR=$(pwd)
 
 exec >  >(tee -a ${LOG_FILE})
 exec 2> >(tee -a ${LOG_FILE} >&2)
+
+
+if [[ $EUID -ne 0 ]];
+then
+    DoEcho "Script must be run as root"
+    exit 1
+fi
+
 #
 ## Surface Pro Kernel
 DoEcho "Installing base kernel version"
