@@ -10,14 +10,14 @@ The script will also make a log file with its full output in the same directory 
 
 
 ## Kernel Used
-The current kernel being used is from the Ubuntu kernel PPA. The version is 3.15.5-utopic which I have included here for convience reasons, for reference it can be found [here](http://kernel.ubuntu.com/~kernel-ppa/mainline/v3.15.5-utopic/).
+The current kernel is a custom one built from [here](https://github.com/GusBricker/surfacepro2-kernel).
 
 
 ## What Works
 - Hibernate
 - Sleep/Suspend
 - Internal Wifi (partly)
-- Typecover (hotplugging is hit and miss)
+- Typecover (including hotplugging)
 - Touchscreen
 - Pen
 - Volume Rocker

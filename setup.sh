@@ -17,19 +17,17 @@ then
 fi
 
 #
-## Generic Ubuntu Kernel from PPA
+## Custom Linux Kernel
 DoEcho "Installing new kernel"
-dpkg -i "${DELIVERY_DIR}/kernel/linux-headers-${KERNEL_VERSION}_${KERNEL_VERSION}.${KERNEL_DATE}_all.dpkg" "${DELIVERY_DIR}/kernel/linux-headers-${KERNEL_VERSION}-generic_${KERNEL_VERSION}.${KERNEL_DATE}_amd64.dpkg" "${DELIVERY_DIR}/kernel/linux-image-${KERNEL_VERSION}-generic_${KERNEL_VERSION}.${KERNEL_DATE}_amd64.dpkg"
+dpkg -i "${DELIVERY_DIR}/kernel/linux-headers-${KERNEL_VERSION}-${KERNEL_LOCAL_VERSION}_${KERNEL_ARCH}.deb" "${DELIVERY_DIR}/kernel/linux-image-${KERNEL_VERSION}-${KERNEL_LOCAL_VERSION}_${KERNEL_ARCH}.deb"
 CheckLastResult $? "Failed installing new kernel"
 AptFixDeps
 CheckLastResult $? "Failed installing new kernel"
 
 DoEcho "Marking new kernel to be held to stop auto updates breaking the system!"
-HoldPackage "linux-headers-${KERNEL_VERSION}"
+HoldPackage "linux-headers-${KERNEL_VERSION}-${KERNEL_LOCAL_VERSION}"
 CheckLastResult $? "Failed to hold kernel headers"
-HoldPackage "linux-headers-${KERNEL_VERSION}-generic"
-CheckLastResult $? "Failed to hold kernel headers"
-HoldPackage "linux-image-${KERNEL_VERSION}-generic"
+HoldPackage "linux-image-${KERNEL_VERSION}-${KERNEL_LOCAL_VERSION}"
 CheckLastResult $? "Failed to hold kernel image"
 
 #

@@ -11,6 +11,6 @@
 #
 # By default this script does nothing.
 
-echo 25 > /sys/class/backlight/acpi_video0/brightness
+echo 250 > /sys/class/backlight/intel_backlight/brightness
 
 exit 0
