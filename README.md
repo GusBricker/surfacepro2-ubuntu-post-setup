@@ -14,15 +14,18 @@ The current kernel is a custom one built from [here](https://github.com/GusBrick
 
 
 ## What Works
-- Hibernate
-- Sleep/Suspend
-- Internal Wifi (partly)
+- Hibernate (suspend to disk)
+- Sleep (suspend to RAM)
+- Internal Wifi (sometimes gives issues)
 - Typecover (including hotplugging)
 - Touchscreen
 - Pen
 - Volume Rocker
 - Basic gestures (using ginn)
 - Basic power saving
+- Front facing camera
+- USB 3.0
+- USB 2.0
 
 
 ## Discussion
