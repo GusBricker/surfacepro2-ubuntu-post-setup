@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#
+## Found using sudo lsusb -t
+USB_PORT="2-2"
+USB_PATH="/sys/bus/usb/drivers/usb"
+
 KillNetworking()
 {
     rfkill block wifi
@@ -8,6 +13,9 @@ KillNetworking()
 RestoreNetworking()
 {
     rfkill unblock wifi
+    echo "${USB_PORT}"|sudo tee "${USB_PATH}/unbind"
+    sleep 1
+    echo "${USB_PORT}"|sudo tee "${USB_PATH}/bind"
 }
 
 case $1 in
