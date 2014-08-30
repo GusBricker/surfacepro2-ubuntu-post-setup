@@ -34,7 +34,15 @@ CheckLastResult $? "Failed to hold kernel image"
 ## WiFi
 DoEcho "Installing Marvel WiFi driver"
 DeliverFile "wifi/usb8798_uapsta.bin" "/lib/firmware/mrvl/"
-CheckLastResult $? "Failed installing WiFi driver"
+DoEcho "Installing latest network-manager"
+AptInstall -d --reininstall network-manager network-manager-gnome
+CheckLastResult $? "Failed installing latest network-manager"
+DoEcho "Installing WICD"
+AptInstall wicd-gtk
+CheckLastResult $? "Failed installing wicd"
+DoEcho "Uninstalling network-manager"
+AptUninstall network-manager-gnome network-manager
+CheckLastResult $? "Failed uninstalling network-manager"
 
 #
 ## Disk
@@ -47,12 +55,6 @@ CheckLastResult $? "Failed to add trim cron job"
 DoEcho "Setting up Ubuntu to hibernate"
 DeliverFile "hibernation/com.ubuntu.enable-hibernate.pkla" "/var/lib/polkit-1/localauthority/50-local.d/"
 CheckLastResult $? "Failed to enable hiberate"
-
-#
-## Sleep
-DoEcho "Installing sleep wifi fix"
-DeliverFile "sleep/11-networking" "/etc/pm/sleep.d/"
-CheckLastResult $? "Failed installing sleep networking script"
 
 #
 ## Default Brightness
@@ -79,4 +81,6 @@ DoEcho "Installing ginn for some nice touch gestures!"
 AptInstall ginn
 CheckLastResult $? "Failed installing ginn"
 
-DoEcho "Done, reboot and make sure you select the kernel marked version ${KERNEL_VERSION} from grub."
+DoEcho "Done, to use wifi open wicd network manager instead from your applications menu."
+DoEcho "Please reboot and make sure you select the kernel marked version ${KERNEL_VERSION} from grub."
+

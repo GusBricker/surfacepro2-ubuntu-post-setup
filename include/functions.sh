@@ -19,6 +19,13 @@ function AptFixDeps()
     apt-get -fy install
 }
 
+function AptUninstall()
+{
+    local packages=$@
+
+    apt-get -y remove --purge ${packages}
+}
+
 function DoEcho()
 {
     echo "==== $1"
