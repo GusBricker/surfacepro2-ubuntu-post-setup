@@ -15,8 +15,8 @@ The current kernel is a custom one built from [here](https://github.com/GusBrick
 
 ## What Works
 - Hibernate (suspend to disk)
-- Sleep (suspend to RAM)
-- Internal Wifi (sometimes gives issues)
+- Sleep (suspend to RAM), sometimes doesn't go to sleep.
+- Internal Wifi, sometimes doesn't reactivate on wakeup from sleep.
 - Typecover (including hotplugging)
 - Touchscreen
 - Pen
