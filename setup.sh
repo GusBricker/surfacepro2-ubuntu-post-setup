@@ -33,7 +33,7 @@ CheckLastResult $? "Failed to hold kernel image"
 #
 ## WiFi
 DoEcho "Installing Marvel WiFi driver"
-DeliverFile "wifi/usb8798_uapsta.bin" "/lib/firmware/mrvl/"
+DeliverFile "wifi/usb8797_uapsta.bin" "/lib/firmware/mrvl/"
 DoEcho "Installing latest network-manager"
 AptInstall -d --reininstall network-manager network-manager-gnome
 CheckLastResult $? "Failed installing latest network-manager"
